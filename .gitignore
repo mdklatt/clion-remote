@@ -1,0 +1,31 @@
+# C++
+
+*.o
+*.so
+*.exe
+*.dll
+
+
+# Sphinx
+
+_build/
+_static/
+_templates/
+
+
+# Vagrant
+
+.vagrant/
+
+
+# IDE settings
+
+.idea/
+.project/
+.pydevproject/
+nbproject/
+
+
+# OS-specific
+
+.DS_Store
