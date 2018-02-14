@@ -12,7 +12,7 @@
  * Test the greeting() function.
  * 
  */
-TEST(test_clion-remote, greeting) {
+TEST(test_greeting, greeting) {
     extern std::string greeting();
     ASSERT_EQ("Hello, World.", greeting());
     return;
