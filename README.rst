@@ -32,16 +32,16 @@ Initial Setup
 
 |python|
 
+4. Start and provision the Vagrant box, and configure the remote project.
+
+.. code-bloc:: shell
+
+    $ vagrant up ubuntu
+    $ python rbuild.py --config --vagrant=ubuntu /vagrant
+
 
 Remote Builds
 -------------
-
-4. Run the build script to configure CMake. The Vagrant box will be started and
-   provisioned as necessary.
-
-.. code-block:: shell
-
-    $ python rbuild.py --config --vagrant=ubuntu /vagrant
 
 5. Create a Python run configuration for the build script. This is used to run
    CMake on the Vagrant box to build the project.
@@ -70,9 +70,9 @@ Remote Debugging
 
 |rdebug|
 
-8. Create a GDB Remote Debug run configuration for the ``hello`` executable.
-   This is used to run the ``gdb`` cross debugger in concert with ``gdbserver``
-   on the Vagrant box. The port number corresponds to the *host* number being
+8. Create a GDB Remote Debug run configuration for the remote executable. This
+   is used to run the ``gdb`` cross debugger in concert with ``gdbserver`` on
+   the Vagrant box. The port number corresponds to the *host* number being
    forwarded to the Vagrant box.
 
 .. |hello| image:: doc/image/hello.png

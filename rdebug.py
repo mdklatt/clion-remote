@@ -54,12 +54,12 @@ def _remote(args):
     if args.ssh:
         command = "ssh {:s} '{:s}".format(args.ssh, command)
     elif args.vagrant:
-        # First, make sure VM is running.
-        vagrant = "vagrant status {:s}".format(args.vagrant)
-        if "running" not in check_output(split(vagrant)):
-            # Start the VM.
-            vagrant = "vagrant up {:s}".format(args.vagrant)
-            check_call(split(vagrant))
+        # First, make sure VM is running. Disabled for now because it's slow.
+        # vagrant = "vagrant status {:s}".format(args.vagrant)
+        # if "running" not in check_output(split(vagrant)):
+        #     # Start the VM.
+        #     vagrant = "vagrant up {:s}".format(args.vagrant)
+        #     check_call(split(vagrant))
         command = "vagrant ssh -c '{:s}' {:s}".format(command, args.vagrant)
     return call(split(command), stdin=open(__file__, "r"))
 
