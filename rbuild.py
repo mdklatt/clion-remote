@@ -7,8 +7,6 @@ The `--config` option must be used the first time the project is built. If
 `--build` and `--install` are both specified, they should refer to the same
 build type or `--install` will have no effect.
 
-For Vagrant builds, the VM will be started if it is not already running.
-
 
 CLion and Vagrant
 -----------------
@@ -101,9 +99,7 @@ def _remote(args):
 
     """
     # The script passes itself to the remote Python interpreter via STDIN, so
-    # it must be self-contained. The --host option should be supported here,
-    # but forwarding the current value to the remote script yields the local
-    # host name, not the remote host name.
+    # it must be self-contained.
     opts = [""]  # force leading delimiter
     if args.config:
         opts.append("config")
