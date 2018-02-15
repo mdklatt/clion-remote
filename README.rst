@@ -43,9 +43,35 @@ Remote Builds
 
     $ python rbuild.py --config --vagrant=ubuntu /vagrant
 
-5. Create a Run Configuration for the build script
+5. Create a Python run configuration for the build script. This is used to run
+   CMake on the Vagrant box to build the project.
 
 .. |rbuild| image:: doc/image/rbuild.png
    :alt: Run Configuration for rbuild.py
 
 |rbuild|
+
+
+Remote Debugging
+----------------
+
+6. Create a Python run configuration for the remote debugging script. This is
+   used to run the ``hello`` executable on the Vagrant box using ``gdbserver``.
+   The port corresponds to the *guest* port number being forwarded on the
+   Vagrant box. Note that the build configuration created above is added as a
+   *Before launch* prerequisite.
+
+.. |rdebug| image:: doc/image/rdebug.png
+   :alt: Run Configuration for rdebug.py
+
+|rdebug|
+
+7. Create a GDB Remote Debug run configuration for the ``hello`` executable.
+   This is used to run the local ``gdb`` cross debugger in concert with
+   ``gdbserver``on the Vagrant box. The port number corresponds to the *host*
+   number being forwarded to the Vagrant box.
+
+.. |hello| image:: doc/image/hello.png
+   :alt: Run Configuration for hello
+
+|hello|
