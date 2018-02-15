@@ -1,31 +1,28 @@
-# C++
+# Ignore C++ build artifacts.
 
 *.o
+*.a
 *.so
-*.exe
-*.dll
+build/
 
 
-# Sphinx
+# Ignore CMake artifacts.
 
-_build/
-_static/
-_templates/
+CMakeCache.txt
+cmake_install.cmake
+CMakeFiles/
 
 
-# Vagrant
+# Ignore Vagrant runtime files.
 
 .vagrant/
 
 
-# IDE settings
+# Ignore IDE settings.
 
 .idea/
-.project/
-.pydevproject/
-nbproject/
 
 
-# OS-specific
+# Ignore OS metadata files.
 
 .DS_Store
