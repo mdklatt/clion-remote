@@ -73,9 +73,6 @@ def main(argv=None):
             config()
         cmake = "cmake --build {:s}".format(path)
         check_call(split(cmake))
-        if args.install == build:
-            cmake += " --target install"
-            check_call(split(cmake))
     return 0
 
 
@@ -92,7 +89,6 @@ def _args(argv=None):
     parser.add_argument("-C", "--clean", action="store_true",
             help="clean before building (implies --config) [False]")
     parser.add_argument("-b", "--build", help="build type [all]")
-    parser.add_argument("-i", "--install", help="install build")
     remote = parser.add_mutually_exclusive_group()
     remote.add_argument("-V", "--vagrant", help="connect to Vagrant VM box")
     remote.add_argument("-S", "--ssh", help="connect to SSH remote host")
@@ -115,19 +111,17 @@ def _remote(args):
         opts.append("clean")
     if args.build:
         opts.append("build={:s}".format(args.build))
-    if args.install:
-        opts.append("install")
-    python = "python - {:s} {:s}".format(" --".join(opts), args.root)
+    command = "python - {:s} {:s}".format(" --".join(opts), args.root)
     if args.ssh:
-        cmd = "ssh {:s} '{:s}".format(args.ssh, python)
+        command = "ssh {:s} '{:s}".format(args.ssh, command)
     elif args.vagrant:
         # First, make sure VM is running.
-        cmd = "vagrant status {:s}".format(args.vagrant)
-        if "running" not in check_output(split(cmd)):
-            cmd = "vagrant up {:s}".format(args.vagrant)
-            check_call(split(cmd))
-        cmd = "vagrant ssh -c '{:s}' {:s}".format(python, args.vagrant)
-    return call(split(cmd), stdin=open(__file__, "r"))
+        vagrant = "vagrant status {:s}".format(args.vagrant)
+        if "running" not in check_output(split(vagrant)):
+            vagrant = "vagrant up {:s}".format(args.vagrant)
+            check_call(split(vagrant))
+        command = "vagrant ssh -c '{:s}' {:s}".format(command, args.vagrant)
+    return call(split(command), stdin=open(__file__, "r"))
 
 
 # Make the script executable.
