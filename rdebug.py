@@ -1,6 +1,6 @@
-""" Execute the FireModel test suite for remote debugging.
+""" Run a remote executable.
 
-The test suite will be executed with gdbserver, allowing it to be debugged on a
+The executable will be executed with gdbserver, allowing it to be debugged on a
 remote machine. This is required for remote debugging using CLion. If this is
 running on a Vagrant box, port forwarding must be configured to expose the
 guest port gdbserver will be listening on.
@@ -57,7 +57,6 @@ def _remote(args):
         # First, make sure VM is running. Disabled for now because it's slow.
         # vagrant = "vagrant status {:s}".format(args.vagrant)
         # if "running" not in check_output(split(vagrant)):
-        #     # Start the VM.
         #     vagrant = "vagrant up {:s}".format(args.vagrant)
         #     check_call(split(vagrant))
         command = "vagrant ssh -c '{:s}' {:s}".format(command, args.vagrant)
