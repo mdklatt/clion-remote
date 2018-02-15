@@ -34,7 +34,7 @@ Initial Setup
 
 4. Start and provision the Vagrant box, and configure the remote project.
 
-.. code-bloc:: shell
+.. code-block:: shell
 
     $ vagrant up ubuntu
     $ python rbuild.py --config --vagrant=ubuntu /vagrant
@@ -164,7 +164,7 @@ using the correct port numbers.
 
     $ vagrant port ubuntu
 
-It's tempting to make the *redbug* configuration a dependency of the Remote
+It's tempting to make the *rdebug* configuration a dependency of the Remote
 Debug configuration to achieve the Holy Grail of integration, a single click
 that does everything. Alas, this does not work. A *Before launch* prerequisite
 must exit before its parent task will start, but *redbug* must run concurrently
