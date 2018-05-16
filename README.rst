@@ -1,22 +1,25 @@
-=============================
+#############################
 Remote Development With CLion
-=============================
+#############################
 
 .. _remote development: https://youtrack.jetbrains.com/issue/CPP-744
 .. _remote debugging: https://www.jetbrains.com/help/clion/remote-debug.html
+.. _2018.2 roadmap: https://blog.jetbrains.com/clion/2018/04/clion-2018-2-roadmap/
+
+`Remote development`_ support in CLion is evolving. As of version 2018.1 there
+is `remote debugging`_ support, and prototype remote development support is in
+the `2018.2 roadmap`_.
+
+This project is an example of using CLion in its current state for remote
+development with Vagrant.
 
 
-`Remote development`_ support in CLion is still evolving. As of version 2017.3
-there is `remote debugging` support, but no remote project support. This
-project is a demonstration of how to use CLion and Vagrant for remote
-development.
-
-
+=====================
 Project Configuration
 =====================
 
 Initial Setup
--------------
+=============
 1. Clone this project.
 
 .. code-block:: shell
@@ -41,7 +44,7 @@ Initial Setup
 
 
 Remote Builds
--------------
+=============
 
 5. Create a Python run configuration for the build script. This is used to run
    CMake on the Vagrant box to build the project.
@@ -53,11 +56,13 @@ Remote Builds
 
 
 Remote Debugging
-----------------
+================
 .. _cross debugging: https://sourceware.org/gdb/wiki/BuildingCrossGDBandGDBserver
+.. _bundled GDB: https://www.jetbrains.com/help/clion/run-debug-configuration-remote-gdb.html
 
 6. Install a local version of GDB that supports `cross debugging`_ for the
-   Vagrant box architecture. [TODO]
+   Vagrant box architecture. If you are using CLion 2018.1 or higher use the
+   `bundled GDB`_, which has multiarch support.
 
 7. Create a Python run configuration for the remote debugging script. This is
    used to run an executable on the Vagrant box using ``gdbserver``. The port
@@ -81,6 +86,7 @@ Remote Debugging
 |hello|
 
 
+===========================
 Remote Development Workflow
 ===========================
 
@@ -103,7 +109,7 @@ box.
 
 
 Editing
--------
+=======
 
 The local project directory is synced with the Vagrant box, so editing is the
 same as with a normal project. This includes the Git workflow, because the repo
@@ -111,7 +117,7 @@ is still local. There is no need to deploy files to the Vagrant box.
 
 
 Building
---------
+========
 
 Use the *rbuild* run configuration to build the project. This can be run by
 itself, or used as a prerequisite of another run configuration to ensure that
@@ -124,7 +130,7 @@ the project is always rebuilt. Output is displayed in the Run window.
 
 
 Running / Debugging
--------------------
+===================
 
 Remote debugging is used to run and debug executables on the Vagant box. For
 this to work there must be an *rdebug* run configuration and a corresponding
@@ -167,12 +173,12 @@ using the correct port numbers.
 It's tempting to make the *rdebug* configuration a dependency of the Remote
 Debug configuration to achieve the Holy Grail of integration, a single click
 that does everything. Alas, this does not work. A *Before launch* prerequisite
-must exit before its parent task will start, but *redbug* must run concurrently
+must exit before its parent task will start, but *rdebug* must run concurrently
 with the debugger.
 
 
 Running Tests
--------------
+=============
 
 The CLion test runners cannot be used for remote development. Run test
 executables using remote debugging, and use the *rdebug* Run window to view
