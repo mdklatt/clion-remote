@@ -12,7 +12,7 @@ project(hello)
 # e.g. `cmake-build-debug`. The CLion directory should be ignored in this case;
 # only the remote build directory matters.
 
-if(NOT DEFINED ${CMAKE_BUILD_TYPE})
+if(NOT DEFINED CMAKE_BUILD_TYPE)
     # If no build type was specified, presume that the current build directory
     # is named after the build type, e.g. ../Debug.
     get_filename_component(CMAKE_BUILD_TYPE ${CMAKE_BINARY_DIR} NAME)
