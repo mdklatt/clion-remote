@@ -107,7 +107,7 @@ def _remote(args):
         opts.append("clean")
     if args.build:
         opts.append("build={:s}".format(args.build))
-    command = "python - {:s} {:s}".format(" --".join(opts), args.root)
+    command = "python3 - {:s} {:s}".format(" --".join(opts), args.root)
     if args.ssh:
         command = "ssh {:s} '{:s}".format(args.ssh, command)
     elif args.vagrant:

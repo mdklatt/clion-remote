@@ -50,7 +50,7 @@ def _remote(args):
     """
     # The script passes itself to the remote Python interpreter via STDIN, so
     # it must be self-contained.
-    command = "python - --port={:s} {:s}".format(args.port, args.target)
+    command = "python3 - --port={:s} {:s}".format(args.port, args.target)
     if args.ssh:
         command = "ssh {:s} '{:s}".format(args.ssh, command)
     elif args.vagrant:
