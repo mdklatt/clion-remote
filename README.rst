@@ -4,14 +4,22 @@ Remote Development With CLion
 
 .. _remote development: https://youtrack.jetbrains.com/issue/CPP-744
 .. _remote debugging: https://www.jetbrains.com/help/clion/remote-debug.html
-.. _2018.2 roadmap: https://blog.jetbrains.com/clion/2018/04/clion-2018-2-roadmap/
+.. _2018.3 EAP: https://blog.jetbrains.com/clion/2018/09/clion-2018-3-eap-remote-dev-unit-testing-performance-new-actions/
+.. _early implementation of remote development: https://blog.jetbrains.com/clion/2018/09/initial-remote-dev-support-clion/
 
-`Remote development`_ support in CLion is evolving. As of version 2018.1 there
-is `remote debugging`_ support, and prototype remote development support is in
-the `2018.2 roadmap`_.
+`Remote development`_ support in CLion is evolving. This project is an example
+of remote development with Vagrant using a version of CLion that supports
+`remote debugging`_ but not full remote development.
 
-This project is an example of using CLion in its current state for remote
-development with Vagrant.
+
+CLion `2018.3 EAP`_ includes an `early implementation of remote development`_:
+local editing with remote building, running, and debugging. The Google Test
+configuration supports remote development as well, so the CLion test runner can
+be used to run tests and view and results. For now, only Linux remote hosts are
+supported. This feature requires a modern version of GDB (7.8+). CentOS 7 and
+Ubuntu Trusty users will have to install a newer version of GDB built from
+source.
+
 
 
 =====================
