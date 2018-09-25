@@ -21,9 +21,3 @@ target_link_libraries(${PROJECT_NAME}
 
 message(STATUS "CMAKE_RUNTIME_OUTPUT_DIRECTORY: ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 message(STATUS "CMAKE_CURRENT_BINARY_DIR: ${CMAKE_CURRENT_BINARY_DIR}")
-add_custom_target(test
-    COMMENT "Executing test suite."
-    COMMAND ${PROJECT_NAME}
-)
-
-add_dependencies(test ${PROJECT_NAME})
