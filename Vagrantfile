@@ -14,7 +14,7 @@ Vagrant.configure(2) do |config|
   config.vm.network :forwarded_port, guest: 2159, host: 2159, auto_correct: true
 
   config.vm.define "ubuntu" do |ubuntu|
-    ubuntu.vm.box = "ubuntu/trusty64"
+    ubuntu.vm.box = "ubuntu/bionic64"  # 18.04
     ubuntu.vm.provision :shell, path: "provision.sh"
   end
 
