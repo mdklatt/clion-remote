@@ -2,20 +2,21 @@
 Remote Development With CLion and Vagrant
 #########################################
 
-.. _2018.3 EAP: https://blog.jetbrains.com/clion/2018/09/initial-remote-dev-support-clion
-.. _remote development: https://youtrack.jetbrains.com/issue/CPP-744
+.. _remote development: https://blog.jetbrains.com/clion/2018/11/clion-2018-3-remote-dev-cpu-profilers-cpp17/#remote_development
+.. _Vagrant: https://www.vagrantup.com
+.. _2018.2: https://github.com/mdklatt/clion-remote/tree/2018.2
 .. _Vagrant support: https://youtrack.jetbrains.com/issue/CPP-7671
 
-.. _early implementation of remote development:
 
+This project is an example of using the new `remote development`_ features of
+CLion 2018.3 with a `Vagrant`_ VM as the remote host. See the `2018.2`_ branch
+for using earlier versions of CLion that support remote debugging but not
+remote builds.
 
-With the `2018.3 EAP`_ release, CLion now implements `remote development`_,
-which allows local editing and remote building and debugging from the IDE.
-There is no integrated `Vagrant support`_ yet, but projects can be manually
-configured to approximate this.
-
-The Vagrant box must be Linux, and it must have ``rsync`` and a recent version
-of GDB (7.8+). Newer versions of Ubuntu include a compatible version of GDB in
+CLion does not have `Vagrant support`_ yet, so some modifications to the
+standard Vagrant workflow are necessary; see the project ``Vagrantfile``. The
+Vagrant box must be Linux, and it must have rsync and a recent version of
+GDB (7.8+). Newer versions of Ubuntu include a compatible version of GDB in
 their standard package repos, but CentOS users will have to build a version
 from source.
 
@@ -24,83 +25,110 @@ from source.
 Initial Setup
 =============
 
-1. Clone this project using the ``Check out from Version Control`` option.
+1. Clone this project.
 
-.. |clone| image:: doc/image/clone.png
-   :alt: Checkout out From Version Control
-
-|clone|
-
-2. Checkout the ``dev-eap`` branch.
-
-3. Start and provision the Vagrant box.
+2. Start and provision the Vagrant box. Note the connection port and remote
+project directory in the Vagrant start-up messages.
 
 .. code-block:: shell
 
-    $ vagrant up ubuntu
+    $ vagrant up
+
+    ...
+
+    ==> default: CLion workarounds enabled
+    ==> default: Use port 22000 for CLion remote host connection
+    ==> default: Use /vagrant as the remote deployment directory
 
 
 =====================
 Project Configuration
 =====================
 
-4. Create a new Toolchain for the Vagrant box. Check the Remote Host option to
-   bring up the login credentials dialog. Use the static IP address assigned to
-   the Vagrant box in the project Vagrantfile (this IP address must be unique
-   on the local private network). As configured for this project, the path to
-   the Vagrant SSH key will be
-   ``/local/path/to/clion-remote/.vagrant/machines/ubuntu/virtualbox/private_key``.
-   Hit ``Apply`` to save the changes.
+.. _static IP: https://www.vagrantup.com/docs/networking/private_network.html#static-ip
+.. _mounted folders: https://youtrack.jetbrains.com/issue/CPP-14887
 
-.. |toolchain| image:: doc/image/toolchain.png
-   :alt: Toolchain
+.. |Toolchains| image:: doc/image/Toolchains.png
+   :alt: Toolchains
 
-|toolchain|
-
-.. |login| image:: doc/image/login.png
+.. |Credentials| image:: doc/image/Credentials.png
    :alt: Remote Host Credentials
 
-|login|
-
-
-5. When a remote Toolchain is created, CLion will automatically create an SFTP
-   Deployment the remote host. For a Vagrant box, it is better to use a Vagrant
-   shared folder. Choose the Deployment for the ``remote-host`` Toolchain (note
-   the IP address), change the type to ``Local or mounted folder``, and add a
-   Mapping to link the local project directory to ``/vagrant`` on the Vagrant
-   box. Hit ``Apply`` to save the changes.
-
-.. |deployment| image:: doc/image/deployment.png
-   :alt: Remote Deployment
-
-|deployment|
-
-.. |mapping| image:: doc/image/mapping.png
-   :alt: Remote Mapping
-
-|mapping|
-
-
-6. Create one or more CMake Profiles for the Vagrant box. Choose the
-   `clion-remote` Toolchain that was configured above. Hit ``OK`` to initiate
-   the remote configuration process.
-
-.. |cmake| image:: doc/image/cmake.png
+.. |CMake| image:: doc/image/CMake.png
    :alt: CMake Profiles
 
-|cmake|
+.. |Deployment| image:: doc/image/Deployment.png
+   :alt: Remote Deployment
+
+.. |Mappings| image:: doc/image/Mappings.png
+   :alt: Mappings
+
+.. |Excluded| image:: doc/image/Excluded.png
+   :alt: Excluded Paths
 
 
-====================
-Development Workflow
-====================
+3. Define a Toolchain to configure the build and debug tools for the Vagrant
+   box. Here, a fixed SSH port is used to connect. A `static IP`_ can be
+   instead. In either case, the address must be unique on the local machine.
 
-Once a remote CMake Profile is properly configured, CLion will sync the project
-to the remote host (not necessary with a shared folder deployment) and run the
-remote CMake. CLion can now be used to edit, build, debug, and run tests for
-the project as if it was on the local machine. Project binaries will be created
-in the generation path configured for the build Profile, *.i.e.*
-``/local/path/to/clion-remote/cmake-build-debug``.
+   |Toolchains|
+
+   Use the Vagrant private key file for this connection.
+
+   |Credentials|
+
+   Once the Toolchain is configured, hit ``Apply`` to create it.
+
+
+4. Define one or more CMake Profiles to configure the build types to use with
+   the Vagrant Toolchain.
+
+   |CMake|
+
+
+5. When a remote Toolchain is created, CLion will create the corresponding SFTP
+   deployment. CLion does not yet support `mounted folders`_ for remote builds,
+   so a Vagrant synced folder cannot be used for the project directory.
+
+   |Deployment|
+
+   The local project is directory is mapped to ``/vagrant`` on the VM. Here,
+   CLion will manage the remote directory, not Vagrant. This means that
+   ``/vagrant`` will be empty during provisioning.
+
+   |Mappings|
+
+   CLion will automatically exclude the local build directory from syncing, but
+   all other exclusions must be manually configured. The local ``.vagrant/``
+   directory should be excluded along with any other files that are not needed
+   to build or run the project.
+
+   |Excluded|
+
+
+===============
+Remote Workflow
+===============
+
+.. |hello| image:: doc/image/hello.png
+   :alt: hello Run/Debug Configuration
+
+.. |debug| image:: doc/image/debug.png
+   :alt: hello Run/Debug Configuration
+
+Once the project is properly configured, CLion will sync files to the Vagrant
+VM and run CMake to build the project model. Run/Debug Configurations will be
+created for all of the project executables.
+
+|hello|
+
+CLion can now be used to edit, build, debug, and test the project as if it was
+on the local machine.
+
+|debug|
+
+Project binaries built on the remote machine will be available in the local
+copy of the build directory.
 
 
 ===============
@@ -108,43 +136,19 @@ Troubleshooting
 ===============
 
 .. _YouTrack: https://youtrack.jetbrains.com/issues/CPP
+.. _CPP-744: https://youtrack.jetbrains.com/issue/CPP-744
 
-This is a beta release with many known issues. Use `YouTrack`_ to find
-workarounds to existing bugs, report new bugs, and make feature requests.
+Use `YouTrack`_ to report new bugs, find workarounds for existing bugs, and
+make feature requests. Many remote development bugs are attached to `CPP-744`_.
 
-Toolchain configurations are based on a fixed host address, which is often not
-the case with Vagrant boxes. Here, a static IP address is used as a workaround.
-An alternative is to assign each Vagrant box a fixed SSH port. This requires
-some extra work to ensure that each Vagrant box is uniquely addressable. DO NOT
-use Vagrant's auto-correct feature.
+For best results with a Vagrant remote host, the VM should be running before
+opening the project in CLion. Still, it's possible for the project to get in
+an inconsistent state that will affect file syncing.
 
-CLion uses the local user's SSH configuration, including the ``known_hosts``
-file. A new remote Toolchain cannot be successfully created if a host key
-already exists for that address. An existing Toolchain will stop working if the
-host key for the remote host changes; this is a particular problem for Vagrant
-development because a Vagrant box gets a new host key every time it is
-initialized. If a remote Toolchain is not working, try deleting any host keys
-with the Vagrant box's address.
+Suggested solutions include:
 
-CLion has a tendency to forget Toolchain configuration values. If a custom
-tool path is configured, *e.g.* ``/usr/local/bin/gdb``, it will eventually
-revert back to its default value. It will be necessary to set the path to
-the correct value again.
-
-CLion will also forget the Remote Host settings for a Toolchain. This is more
-problematic. The settings have to be entered again, which will create a new
-SFTP Deployment that also has to be reconfigured to use a shared folder. Any
-old Deployments for this address are not removed, so there may be more than
-one orphaned Deployments identified with the same address.
-
-It's possible to use SFTP Deployments with Vagrant boxes, but this is not
-recommended. The time on the Vagrant box can fall behind the host computer,
-which may prevent project files from being synced correctly.
-
-.. _CPP-14315: https://youtrack.jetbrains.com/issue/CPP-14315
-.. _CPP-14317: https://youtrack.jetbrains.com/issue/CPP-14317
-.. _CPP-14328: https://youtrack.jetbrains.com/issue/CPP-14328
-
-- `CPP-14315`_: Remote toolchains lose their ssh config on CLion restart
-- `CPP-14317`_: Changed files not downloaded to target after setting target clock
-- `CPP-14328`_: Remote toolchain loses custom GDB setting
+- Run ``Tools->CMake->Reload CMake Project``
+- Run ``Tools->CMake->Reset Cache and Reload Project``
+- Run ``File->Invalidate Caches / Restart``
+- Restart the Vagrant VM
+- Delete the Toolchain configuration and recreate it
