@@ -1,22 +1,29 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-Vagrant.configure(2) do |config|
+Vagrant.configure("2") do |config|
 
-  # CLion does not yet support Vagrant directly, so assign a static IP address
-  # to use as the host address for a remote toolchain configuration. Every
-  # Vagrant box should have it's own unique address to minimize the chance of
-  # IP conflicts on the local network.
-  #
-  # It's possible to use localhost:NNNN instead of an IP address, but it's
-  # important to make sure each Vagrant box is using a unique static port for
-  # SSH in this case, i.e. don't use `auto_correct` for SSH ports.
+  config.vm.box = "ubuntu/bionic64"
+  config.vm.provision :shell, path: "provision.sh"
 
-  config.vm.network "private_network", ip: "192.168.237.50"
+  clion = true
+  if clion
+    config.vm.post_up_message = "CLion workarounds enabled"
 
-  config.vm.define "ubuntu" do |ubuntu|
-    ubuntu.vm.box = "ubuntu/bionic64"  # 18.04
-    ubuntu.vm.provision :shell, path: "provision.sh"
+    # CLion relies on a fixed SSH address, so assign static SSH port here. This
+    # must be unique on the host machine.
+    port = 22000  # must be unique to this configuration
+    config.vm.post_up_message += "\nUse port #{port} for CLion remote host connection"
+    config.vm.network "forwarded_port", id: "ssh", host: port, guest: 22, auto_correct: false
+
+    # CLion only supports SFTP deployments for remote development, so disable
+    # folder syncing and let CLion manage the project directory. This means
+    # that the local contents of the project directory will not be available on
+    # the VM during first-time provisioning.
+    remote = "/vagrant"
+    config.vm.post_up_message += "\nUse #{remote} as the remote deployment directory"
+    config.vm.synced_folder ".", remote, disabled: true
+    config.vm.provision :shell, inline: "sudo sh -c '(mkdir #{remote} 2>/dev/null && chown vagrant:vagrant #{remote}) || true'"
   end
 
 end
