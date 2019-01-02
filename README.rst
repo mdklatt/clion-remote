@@ -93,8 +93,9 @@ Project Configuration
    |Deployment|
 
    The local project is directory is mapped to ``/vagrant`` on the VM. Here,
-   CLion will manage the remote directory, not Vagrant. This means that
-   ``/vagrant`` will be empty during provisioning.
+   CLion will manage the remote directory, not Vagrant. Files in the project
+   directory **cannot be used during Vagrant provisioning** because they will
+   not be synced to the VM at that point.
 
    |Mappings|
 
@@ -141,14 +142,16 @@ Troubleshooting
 Use `YouTrack`_ to report new bugs, find workarounds for existing bugs, and
 make feature requests. Many remote development bugs are attached to `CPP-744`_.
 
-For best results with a Vagrant remote host, the VM should be running before
-opening the project in CLion. Still, it's possible for the project to get in
-an inconsistent state that will affect file syncing.
+It will sometimes be necessary to run ``Tools->CMake->Reload CMake Project`` to
+force CLion to reconnect to the remote host.
 
-Suggested solutions include:
+It is possible for the project to get into an inconsistent state that will
+disrupt file syncing. In some cases, CLion will be unable to sync updated build
+files from the remote machine to the local machine. In other cases, CLion will
+stop syncing local source files to the remote machine. If this occurs, try
+these troubleshooting steps:
 
-- Run ``Tools->CMake->Reload CMake Project``
 - Run ``Tools->CMake->Reset Cache and Reload Project``
 - Run ``File->Invalidate Caches / Restart``
 - Restart the Vagrant VM
-- Delete the Toolchain configuration and recreate it
+- Delete the remote Toolchain configuration and recreate it
