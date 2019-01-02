@@ -13,11 +13,6 @@ cmake_install.cmake
 CMakeFiles/
 
 
-# Ignore pyenv files.
-
-.python-version
-
-
 # Ignore Vagrant runtime files.
 
 .vagrant/
@@ -31,3 +26,4 @@ CMakeFiles/
 # Ignore OS metadata files.
 
 .DS_Store
+Thumbs.db
