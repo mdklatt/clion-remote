@@ -1,7 +1,7 @@
-add_subdirectory(lib/gtest EXCLUDE_FROM_ALL)
+add_subdirectory(vendor/googletest EXCLUDE_FROM_ALL)
 
 add_executable(test_hello
-    test_greeting.cpp
+    src/test_greeting.cpp
     $<TARGET_OBJECTS:greeting>
 )
 
