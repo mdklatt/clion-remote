@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+## Run the project Python interpreter on a Vagrant VM.
+##
+## The script can be configured via these environment variables:
+##
+##   RPYTHON_HOST: Vagrant VM name; default is `default`
+##   RPYTHON_SCRIPT: Remote path to script; default is `/vagran/rpython`
+##   RPYTHON_PWD: Remote working directory; default is RPYTHON_SCRIPT directory
+##   RPYTHON_PYTHON: Remote Python interpreter; default is `python3`
+##
+## This is intended as a workaround for the lack of remote Python spport in
+## CLion. Use this to create Run Configurarions for running remote Python
+## commands within the IDE.
+##
+set -e  # fail immediately on error
+if [[ -z $RPYTHON_REMOTE ]]; then
+    # Running locally.
+    host="${RPYTHON_HOST-default}"
+    script="${RPYTHON_PROJECT-/vagrant/rpython}"
+    python="${RPYTHON_PYTHON-python3}"
+    dir=$(dirname $script)
+    pwd="${RPYTHON_PWD-$dir}"
+    command="RPYTHON_REMOTE=1 RPYTHON_PYTHON=$python RPYTHON_PWD=$pwd $script $*"
+    vagrant ssh "$host" -c "$command"
+else
+    # Running on the Vagrant VM.
+    cd "$RPYTHON_PWD" && $RPYTHON_PYTHON "$@"
+fi
+exit $?
