@@ -140,18 +140,19 @@ Troubleshooting
 .. _CPP-744: https://youtrack.jetbrains.com/issue/CPP-744
 
 Use `YouTrack`_ to report new bugs, find workarounds for existing bugs, and
-make feature requests. Many remote development bugs are attached to `CPP-744`_.
+make feature requests. `CPP-744`_ is the parent for remote development issues.
 
-It will sometimes be necessary to run ``Tools->CMake->Reload CMake Project`` to
-force CLion to reconnect to the remote host.
+If CLion loses connection with the VM, run ``Tools->Resync with Remote Hosts``.
+If that option is not available, run ``Tools->CMake-Reload CMake Project``.
 
 It is possible for the project to get into an inconsistent state that will
 disrupt file syncing. In some cases, CLion will be unable to sync updated build
 files from the remote machine to the local machine. In other cases, CLion will
 stop syncing local source files to the remote machine. If this occurs, try
-these troubleshooting steps:
+these other troubleshooting options:
 
 - Run ``Tools->CMake->Reset Cache and Reload Project``
+- Run ``Tools->Deployment->Upload to...``
+- Remove the file ``/vagrant/.clion.source.upload.marker`` from the VM
 - Run ``File->Invalidate Caches / Restart``
 - Restart the Vagrant VM
-- Delete the remote Toolchain configuration and recreate it
