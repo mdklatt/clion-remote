@@ -2,23 +2,17 @@
 Remote Development With CLion and Vagrant
 #########################################
 
-.. _remote development: https://blog.jetbrains.com/clion/2018/11/clion-2018-3-remote-dev-cpu-profilers-cpp17/#remote_development
+.. _remote development: https://www.jetbrains.com/help/clion/remote-development.html
 .. _Vagrant: https://www.vagrantup.com
-.. _2018.2: https://github.com/mdklatt/clion-remote/tree/2018.2
 .. _Vagrant support: https://youtrack.jetbrains.com/issue/CPP-7671
+.. _Python: doc/python.rst
 
+This project is an example of using the CLion `remote development`_ features
+with a `Vagrant`_ VM as the remote host. CLion does not have `Vagrant support`_
+yet, so some modifications to the standard Vagrant workflow are necessary; see
+the project ``Vagrantfile``.
 
-This project is an example of using the new `remote development`_ features of
-CLion 2018.3 with a `Vagrant`_ VM as the remote host. See the `2018.2`_ branch
-for using earlier versions of CLion that support remote debugging but not
-remote builds.
-
-CLion does not have `Vagrant support`_ yet, so some modifications to the
-standard Vagrant workflow are necessary; see the project ``Vagrantfile``. The
-Vagrant box must be Linux, and it must have rsync and a recent version of
-GDB (7.8+). Newer versions of Ubuntu include a compatible version of GDB in
-their standard package repos, but CentOS users will have to build a version
-from source.
+See `Python`_ for using CLion to run remote Python applications.
 
 
 =============
