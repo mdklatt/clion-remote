@@ -2,18 +2,11 @@
 Remote Development With CLion and Vagrant
 #########################################
 
-.. _remote development: https://www.jetbrains.com/help/clion/remote-development.html
-.. _Vagrant: https://www.vagrantup.com
-.. _Vagrant support: https://youtrack.jetbrains.com/issue/CPP-7671
-.. _Python: doc/python.rst
-
 This project is an example of using the CLion `remote development`_ features
-with a `Vagrant`_ VM as the remote host. CLion does not have `Vagrant support`_
-yet, so some modifications to the standard Vagrant workflow are necessary; see
-the project ``Vagrantfile``.
+with a `Vagrant`_ VM as the remote host.
 
-See `Python`_ for using CLion to run remote Python applications.
-
+This is for CLion 2021.2, which includes some important features for Vagrant
+support. Users of older versions should refer to the `main branch`_.
 
 =============
 Initial Setup
@@ -21,26 +14,23 @@ Initial Setup
 
 1. Clone this project.
 
-2. Start and provision the Vagrant box. Note the connection port and remote
-project directory in the Vagrant start-up messages.
+2. Start and provision the Vagrant box. Note the connection port in the Vagrant
+   start-up messages.
 
 .. code-block:: shell
 
     $ vagrant up
 
-    ...
-
-    ==> default: CLion workarounds enabled
+    ==> default: Machine 'default' has a post `vagrant up` message. This is a message
+    ==> default: from the creator of the Vagrantfile, and not from Vagrant itself:
+    ==> default:
+    ==> default:
     ==> default: Use port 22000 for CLion remote host connection
-    ==> default: Use /vagrant as the remote deployment directory
 
 
 =====================
 Project Configuration
 =====================
-
-.. _static IP: https://www.vagrantup.com/docs/networking/private_network.html#static-ip
-.. _mounted folders: https://youtrack.jetbrains.com/issue/CPP-14887
 
 .. |Toolchains| image:: doc/image/Toolchains.png
    :alt: Toolchains
@@ -54,16 +44,10 @@ Project Configuration
 .. |Deployment| image:: doc/image/Deployment.png
    :alt: Remote Deployment
 
-.. |Mappings| image:: doc/image/Mappings.png
-   :alt: Mappings
-
-.. |Excluded| image:: doc/image/Excluded.png
-   :alt: Excluded Paths
-
 
 3. Define a Toolchain to configure the build and debug tools for the Vagrant
-   box. Here, a fixed SSH port is used to connect. A `static IP`_ can be
-   instead. In either case, the address must be unique on the local machine.
+   box. Here, a fixed SSH port is used to connect. A `static IP`_ address can
+   be instead. In either case, the address must be unique on the local machine.
 
    |Toolchains|
 
@@ -80,26 +64,13 @@ Project Configuration
    |CMake|
 
 
-5. When a remote Toolchain is created, CLion will create the corresponding SFTP
-   deployment. CLion does not yet support `mounted folders`_ for remote builds,
-   so a Vagrant synced folder cannot be used for the project directory.
+5. When a remote Toolchain is created, CLion will create an SFTP deployment
+   by default. This should be changed to a `Local or mounted folder`_ for use
+   with Vagrant. The local path is the project directory and the remote path is
+   the synced folder configured in your Vagrantfile (``/vagrant`` by default).
+   There is no need to configure any excluded paths.
 
    |Deployment|
-
-   The local project is directory is mapped to ``/vagrant`` on the VM. Here,
-   CLion will manage the remote directory, not Vagrant. Files in the project
-   directory **cannot be used during Vagrant provisioning** because they will
-   not be synced to the VM at that point.
-
-   |Mappings|
-
-   CLion will automatically exclude the local build directory from syncing, but
-   all other exclusions must be manually configured. The local ``.vagrant/``
-   directory should be excluded along with any other files that are not needed
-   to build or run the project.
-
-   |Excluded|
-
 
 ===============
 Remote Workflow
@@ -111,42 +82,81 @@ Remote Workflow
 .. |debug| image:: doc/image/debug.png
    :alt: hello Run/Debug Configuration
 
-Once the project is properly configured, CLion will sync files to the Vagrant
-VM and run CMake to build the project model. Run/Debug Configurations will be
-created for all of the project executables.
+.. |ssh-vagrant| image:: doc/image/ssh-vagrant.png
+   :alt: SSH Terminal options
+
+.. |terminal| image:: doc/image/terminal.png
+   :alt: Vagrant VM terminal
+
+.. |Vagrantfile| image:: doc/image/Vagrantfile.png
+   :alt: Vagrantfile
+
+Once the project is properly configured, CLion will run CMake on the Vagrant VM
+to build the project model. Run/Debug Configurations will be created for all of
+the project executables.
 
 |hello|
 
-CLion can now be used to edit, build, debug, and test the project as if it was
-on the local machine.
+CLion can be used to edit, build, debug, and test the project as if it was on
+the local machine.
 
 |debug|
 
-Project binaries built on the remote machine will be available in the local
-copy of the build directory.
+Project binaries built on the remote machine will be available locally in the
+mounted build directory.
+
+
+Selecting the new ``Current Vagrant`` option (undocumented) in the SSH Terminal
+settings will allow CLion to automatically connect to the local Vagrant VM when
+opening a `remote host terminal`_.
+
+|ssh-vagrant|
+
+|terminal|
+
+
+Another new Vagrant feature is basic syntax coloring for Vagrantfiles.
+
+|Vagrantfile|
 
 
 ===============
 Troubleshooting
 ===============
 
-.. _YouTrack: https://youtrack.jetbrains.com/issues/CPP
-.. _CPP-744: https://youtrack.jetbrains.com/issue/CPP-744
-
 Use `YouTrack`_ to report new bugs, find workarounds for existing bugs, and
 make feature requests. `CPP-744`_ is the parent for remote development issues.
 
 If CLion loses connection with the VM, run ``Tools->Resync with Remote Hosts``.
-If that option is not available, run ``Tools->CMake-Reload CMake Project``.
+If that option is not available, run ``Tools->CMake->Reload CMake Project``.
 
-It is possible for the project to get into an inconsistent state that will
-disrupt file syncing. In some cases, CLion will be unable to sync updated build
-files from the remote machine to the local machine. In other cases, CLion will
-stop syncing local source files to the remote machine. If this occurs, try
-these other troubleshooting options:
+Using a mounted folder should significantly decrease file syncing issues when
+using Vagrant, but this is still under development and has some rough edges
+(*e.g.* `CPP-14887`_).
 
-- Run ``Tools->CMake->Reset Cache and Reload Project``
-- Run ``Tools->Deployment->Upload to...``
-- Remove the file ``/vagrant/.clion.source.upload.marker`` from the VM
-- Run ``File->Invalidate Caches / Restart``
-- Restart the Vagrant VM
+Under some circumstances, CLion will silently create a new SFTP Deployment for
+a remote Toolchain. Any time this happens, the new Deployment needs to be
+edited to use a `Local or mounted folder`_ as described above. It is usually
+not obvious at first when this happens, but file syncing issues may become
+apparent until new Deployment is fixed.
+
+CLion will not automatically remove old Deployments, so a project may
+accumulate a number of orphaned Deployment configurations. The UID in the
+Deployment name will match the UID in the Toolchain name *only if this is the
+first Deployment created for that Toolchain*. Once that Deployment has been
+orphaned the UID is no longer helpful in determining which Deployment is active
+for the project. There is a `feature request`_ that will help with this.
+
+
+.. _remote development: https://www.jetbrains.com/help/clion/remote-development.html
+.. _Vagrant: https://www.vagrantup.com
+.. _Vagrant support: https://youtrack.jetbrains.com/issue/CPP-7671
+.. _Python: doc/python.rst
+.. _YouTrack: https://youtrack.jetbrains.com/issues/CPP
+.. _CPP-744: https://youtrack.jetbrains.com/issue/CPP-744
+.. _static IP: https://www.vagrantup.com/docs/networking/private_network.html#static-ip
+.. _CPP-14887: https://youtrack.jetbrains.com/issue/CPP-14887
+.. _Local or mounted folder: https://www.jetbrains.com/help/clion/remote-projects-support.html#deployment-entry
+.. _main branch: https://github.com/mdklatt/clion-remote
+.. _remote host terminal: https://www.jetbrains.com/help/clion/remote-host-terminal.html
+.. _feature request: https://youtrack.jetbrains.com/issue/CPP-25579
