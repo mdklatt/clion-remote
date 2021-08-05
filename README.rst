@@ -6,11 +6,15 @@ Remote Development With CLion and Vagrant
 .. _Vagrant: https://www.vagrantup.com
 .. _Vagrant support: https://youtrack.jetbrains.com/issue/CPP-7671
 .. _Python: doc/python.rst
+.. _2021.2 branch: https://github.com/mdklatt/clion-remote/tree/2021.2
 
 This project is an example of using the CLion `remote development`_ features
 with a `Vagrant`_ VM as the remote host. CLion does not have `Vagrant support`_
 yet, so some modifications to the standard Vagrant workflow are necessary; see
 the project ``Vagrantfile``.
+
+CLion 2021.2 adds some features that simplify working with Vagrant VMs. See
+the `2021.2 branch`_ for instructions specific to that version.
 
 See `Python`_ for using CLion to run remote Python applications.
 
